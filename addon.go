@@ -10,6 +10,8 @@ import (
 	"strings"
 )
 
+type jsonObj map[string]interface{}
+
 type CatalogItem struct {
 	Type string `json:"type"`
 	Id   string `json:"id"`
@@ -145,7 +147,6 @@ func CatalogHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.Write([]byte(`{"metas": `))
 
 	metas := []JupiterShow{}
 	for _, show := range jupiterShows {
@@ -159,9 +160,8 @@ func CatalogHandler(w http.ResponseWriter, r *http.Request) {
 		metas = append(metas, item)
 	}
 
-	catalogJson, _ := json.Marshal(metas)
+	catalogJson, _ := json.Marshal(&jsonObj{ "metas": metas })
 	w.Write(catalogJson)
-	w.Write([]byte(`}`))
 }
 
 func MetaHandler(w http.ResponseWriter, r *http.Request) {
@@ -176,10 +176,8 @@ func MetaHandler(w http.ResponseWriter, r *http.Request) {
 		if show.Id == params["id"] {
 			UpdateEpisodes(*show)
 			w.Header().Set("Content-Type", "application/json")
-			w.Write([]byte(`{"meta": `))
-			streamJson, _ := json.Marshal(show)
+			streamJson, _ := json.Marshal(&jsonObj{ "meta": show })
 			w.Write(streamJson)
-			w.Write([]byte(`}`))
 			return
 		}
 	}
