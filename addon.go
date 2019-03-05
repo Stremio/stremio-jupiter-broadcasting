@@ -1,48 +1,48 @@
 package main
 
 import (
-// 	"fmt"
+	// 	"fmt"
 	"encoding/json"
-	"net/http"
-	"log"
-	"strings"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"log"
+	"net/http"
+	"strings"
 )
 
 type CatalogItem struct {
-    Type	string			`json:"type"`
-    Id		string			`json:"id"`
+	Type string `json:"type"`
+	Id   string `json:"id"`
 }
 
 type Manifest struct {
-    Id		string		`json:"id"`
-    Version	string		`json:"version"`
-    Name	string		`json:"name"`
-    Description	string		`json:"description"`
-    Types	[]string	`json:"types"`
-    Catalogs	[]CatalogItem	`json:"catalogs"`
-    Resources	[]string	`json:"resources"`
+	Id          string        `json:"id"`
+	Version     string        `json:"version"`
+	Name        string        `json:"name"`
+	Description string        `json:"description"`
+	Types       []string      `json:"types"`
+	Catalogs    []CatalogItem `json:"catalogs"`
+	Resources   []string      `json:"resources"`
 }
 
 type MetaItem struct {
-    Name	string			`json:"name"`
-    Genres	[]string		`json:"genres,omitempty"`
+	Name   string   `json:"name"`
+	Genres []string `json:"genres,omitempty"`
 }
 
 var CATALOG_ID = "Jupiter Broadcasting Shows"
 
 var MANIFEST = Manifest{
-	Id:		"org.stremio.video.jupiterbroadcasting",
-	Version:	"0.0.1",
-	Name:		"Jupiter Broadcasting",
-	Description:	"Watch shows from the Jupiter Broadcasting Network including Linux Action News, TechSNAP, Ask Noah, Coder Radio, and more.",
-	Types:		[]string{ "series" },
-	Catalogs:	[]CatalogItem{},
-	Resources:	[]string{ "stream", "catalog", "meta" },
+	Id:          "org.stremio.video.jupiterbroadcasting",
+	Version:     "0.0.1",
+	Name:        "Jupiter Broadcasting",
+	Description: "Watch shows from the Jupiter Broadcasting Network including Linux Action News, TechSNAP, Ask Noah, Coder Radio, and more.",
+	Types:       []string{"series"},
+	Catalogs:    []CatalogItem{},
+	Resources:   []string{"stream", "catalog", "meta"},
 }
 
-var jupiterShows []*JupiterShow 
+var jupiterShows []*JupiterShow
 
 func main() {
 	jupiterShows = InitShows()
@@ -79,10 +79,8 @@ func main() {
 	}
 }
 
-
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	type jsonObj map[string]interface{}
-
 
 	jr, _ := json.Marshal(jsonObj{"Path": '/'})
 	w.Header().Set("Content-Type", "application/json")
@@ -132,10 +130,10 @@ func StreamHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.Write([] byte(`{"streams": [`))
+	w.Write([]byte(`{"streams": [`))
 	streamJson, _ := json.Marshal(stream)
 	w.Write(streamJson)
-	w.Write([] byte(`]}`))
+	w.Write([]byte(`]}`))
 }
 
 func CatalogHandler(w http.ResponseWriter, r *http.Request) {
@@ -147,14 +145,14 @@ func CatalogHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.Write([] byte(`{"metas": `))
+	w.Write([]byte(`{"metas": `))
 
 	metas := []JupiterShow{}
 	for _, show := range jupiterShows {
 		item := JupiterShow{
-			Id: show.Id,
-			Type: params["type"],
-			Name: show.Name,
+			Id:     show.Id,
+			Type:   params["type"],
+			Name:   show.Name,
 			Genres: show.Genres,
 			Poster: show.Logo,
 		}
@@ -163,7 +161,7 @@ func CatalogHandler(w http.ResponseWriter, r *http.Request) {
 
 	catalogJson, _ := json.Marshal(metas)
 	w.Write(catalogJson)
-	w.Write([] byte(`}`))
+	w.Write([]byte(`}`))
 }
 
 func MetaHandler(w http.ResponseWriter, r *http.Request) {
@@ -178,10 +176,10 @@ func MetaHandler(w http.ResponseWriter, r *http.Request) {
 	for _, show := range jupiterShows {
 		if show.Id == params["id"] {
 			w.Header().Set("Content-Type", "application/json")
-			w.Write([] byte(`{"meta": `))
+			w.Write([]byte(`{"meta": `))
 			streamJson, _ := json.Marshal(show)
 			w.Write(streamJson)
-			w.Write([] byte(`}`))
+			w.Write([]byte(`}`))
 			return
 		}
 	}
