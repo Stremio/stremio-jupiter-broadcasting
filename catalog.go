@@ -152,8 +152,7 @@ func UpdateEpisodes(show JupiterShow) []Episode {
 	episodes := []Episode{}
 
 	if err != nil {
-		log.Println("Error fetching jupiter feed: %q", err)
-		log.Println("Error fetching jupiter feed: %v", err.Error())
+		log.Printf("Error fetching jupiter feed: %v\n", err.Error())
 		return episodes
 	}
 
