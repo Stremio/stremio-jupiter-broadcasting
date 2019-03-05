@@ -167,7 +167,6 @@ func CatalogHandler(w http.ResponseWriter, r *http.Request) {
 func MetaHandler(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
-	//XXX: update episodes
 	if params["type"] != "series" {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -175,6 +174,7 @@ func MetaHandler(w http.ResponseWriter, r *http.Request) {
 
 	for _, show := range jupiterShows {
 		if show.Id == params["id"] {
+			UpdateEpisodes(*show)
 			w.Header().Set("Content-Type", "application/json")
 			w.Write([]byte(`{"meta": `))
 			streamJson, _ := json.Marshal(show)
