@@ -3,7 +3,7 @@
 (WIP) This addons allows you to watch the latest content from some [Jupiter Broadcasting shows](https://www.jupiterbroadcasting.com/) - Independent coverage of Linux, BSD, Open Source, System Administration, Information Security, News, Software Development and Discussion.
 
 ## How to build & run
-To build the addon one needs an up to date version of go - simply run
+To build the addon one needs an up to date version of go (1.11 or newer) - simply run
 ```
 go build
 ```
