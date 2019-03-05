@@ -1,10 +1,11 @@
 package main
 
 import (
-	"fmt"
+// 	"fmt"
 	"encoding/json"
 	"net/http"
 	"log"
+	"strings"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
@@ -97,44 +98,35 @@ func ManifestHandler(w http.ResponseWriter, r *http.Request) {
 func StreamHandler(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
-	fmt.Printf("func StreamHandler(")
-
 	if params["type"] != "series" {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	fmt.Printf("StreamHandler: " + params["type"] + ":     id is " + params["id"] + "\n")
-	
-	var showID int
-	var episodeId int
 	var Show *JupiterShow = nil
+	itemIds := strings.Split(params["id"], ":")
+	showID := itemIds[0]
 
-	fmt.Sscanf(params["id"], "%d:%d", &showID, &episodeId)
-	fmt.Printf("StreamHandler: after scan show id " + string(showID) + "  :    episode id  " + string(episodeId))
 	for _, show := range jupiterShows {
-		fmt.Printf("No show " + show.Id + " " + string(showID) )
-		if show.Id == string(showID) {
+		if show.Id == showID {
 			Show = show
-			fmt.Printf("Found show " + show.Id + string(showID))
 			break
 		}
 	}
 	if Show == nil {
-		fmt.Printf("No show ")
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	stream := StreamItem{}
+	var stream *StreamItem
+
 	for _, episode := range Show.EpisodeList {
-		if episodeId == episode.Episode {
-			stream = episode.Streams[0]
+		if params["id"] == episode.Id {
+			stream = &episode.Streams[0]
 			break
 		}
 	}
-	if stream == (StreamItem{}) {
-		fmt.Printf("No steam/episode ")
+	if stream == nil {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
@@ -148,8 +140,6 @@ func StreamHandler(w http.ResponseWriter, r *http.Request) {
 
 func CatalogHandler(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-
-	fmt.Printf("func CatalogHandler(")
 
 	if params["type"] != "series" {
 		w.WriteHeader(http.StatusNotFound)
@@ -179,7 +169,6 @@ func CatalogHandler(w http.ResponseWriter, r *http.Request) {
 func MetaHandler(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
-	fmt.Printf("func MetaHandler(" + params["id"])
 	//XXX: update episodes
 	if params["type"] != "series" {
 		w.WriteHeader(http.StatusNotFound)
@@ -187,9 +176,7 @@ func MetaHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, show := range jupiterShows {
-		fmt.Printf("MetaHandler() " +  show.Id)
 		if show.Id == params["id"] {
-			fmt.Printf(show.Name + ": episodes " + string(len(show.EpisodeList)))
 			w.Header().Set("Content-Type", "application/json")
 			w.Write([] byte(`{"meta": `))
 			streamJson, _ := json.Marshal(show)

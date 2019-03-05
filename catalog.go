@@ -5,10 +5,11 @@ import (
 	"encoding/json"
 	"net/http"
 	"fmt"
+	"log"
 )
 
 type FeedAttachment struct {
-	Url		string		`json:"id"`
+	Url		string		`json:"url"`
 	MimeType	string		`json:"mime_type"`
 	SizeInBytes	uint64		`json:"size_in_bytes"`
 }
@@ -23,7 +24,7 @@ type FeedEpisode struct {
 }
 
 type Episode struct {
-	Id		string		`json:"id,omitempty"` //XXX
+	Id		string		`json:"id"` //XXX
 	Season		int		`json:"season"`
 	Episode		int		`json:"episode"`
 	Title		string		`json:"title"`
@@ -58,7 +59,7 @@ type StreamItem struct {
     Title	string			`json:"title"`
     InfoHash	string			`json:"infoHash,omitempty"`
     FileIdx	uint8			`json:"fileIdx,omitempty"`
-    Url		string			`json:"url,omitempty"`
+    Url		string			`json:"url"`
     YtId	string			`json:"ytId,omitempty"`
     ExternalUrl	string			`json:"externalUrl,omitempty"`
 }
@@ -124,7 +125,7 @@ func InitShows() (showList []*JupiterShow) {
 	})
 
 	showList = append(showList, &JupiterShow{
-		Id: "30008",
+		Id: "30024",
 		Type: "series",
 		Name: "User Error",
 		Description: "Life is a series of mistakes, but that's what makes it interesting. A show " +
@@ -137,7 +138,6 @@ func InitShows() (showList []*JupiterShow) {
 
 	for _, show := range showList {
 		show.EpisodeList = UpdateEpisodes(*show)
-		fmt.Println(len(show.EpisodeList))
 	}
 
 	return showList
@@ -149,14 +149,13 @@ func UpdateEpisodes(show JupiterShow) ([]Episode) {
 
 	var jsonResponse JsonResponse
 	err := json.Unmarshal(bytes, &jsonResponse)
-	
-	fmt.Println(err)
-
-	fmt.Println(len(jsonResponse.Episodes))
-
-	fmt.Println(jsonResponse.Title, ", ", jsonResponse.HomePage)
-
 	episodes := []Episode{}
+
+	if err != nil {
+		log.Println("Error fetching jupiter feed: %q", err)
+		log.Println("Error fetching jupiter feed: %v", err.Error())
+		return episodes
+	}
 
 	for j, feedItem := range jsonResponse.Episodes {
 		episode := Episode{
