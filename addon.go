@@ -49,7 +49,6 @@ var jupiterShows []*JupiterShow
 func main() {
 	jupiterShows = InitShows()
 
-	//MANIFEST.Catalogs = append(MANIFEST.Catalogs, CatalogItem{"channels", CATALOG_ID})
 	MANIFEST.Catalogs = append(MANIFEST.Catalogs, CatalogItem{"series", CATALOG_ID})
 
 	r := mux.NewRouter()
