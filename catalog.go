@@ -64,7 +64,6 @@ type StreamItem struct {
 	ExternalUrl string `json:"externalUrl,omitempty"`
 }
 
-//var FEED_BURNER = "http://feeds2.feedburner.com/"
 var JUPITER_COM = "http://www.jupiterbroadcasting.com/"
 var DEFAULT_GENRES = []string{"Education", "Technology"}
 var FEED_BASE = "http://feed.jupiter.zone/"
