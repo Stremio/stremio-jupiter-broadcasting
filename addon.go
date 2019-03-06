@@ -35,13 +35,14 @@ type MetaItem struct {
 var CATALOG_ID = "Jupiter Broadcasting Shows"
 
 var MANIFEST = Manifest{
-	Id:          "org.stremio.video.jupiterbroadcasting",
-	Version:     "0.0.1",
-	Name:        "Jupiter Broadcasting",
-	Description: "Watch shows from the Jupiter Broadcasting Network including Linux Action News, TechSNAP, Ask Noah, Coder Radio, and more.",
-	Types:       []string{"series"},
-	Catalogs:    []CatalogItem{},
-	Resources:   []string{"stream", "catalog", "meta"},
+	Id:      "org.stremio.video.jupiterbroadcasting",
+	Version: "0.0.1",
+	Name:    "Jupiter Broadcasting",
+	Description: "Watch shows from the Jupiter Broadcasting Network including Linux" +
+		" Action News, TechSNAP, Ask Noah, Coder Radio, and more.",
+	Types:     []string{"series"},
+	Catalogs:  []CatalogItem{},
+	Resources: []string{"stream", "catalog", "meta"},
 }
 
 var jupiterShows []*JupiterShow
@@ -157,7 +158,7 @@ func CatalogHandler(w http.ResponseWriter, r *http.Request) {
 		metas = append(metas, item)
 	}
 
-	catalogJson, _ := json.Marshal(&jsonObj{ "metas": metas })
+	catalogJson, _ := json.Marshal(&jsonObj{"metas": metas})
 	w.Write(catalogJson)
 }
 
@@ -173,7 +174,7 @@ func MetaHandler(w http.ResponseWriter, r *http.Request) {
 		if show.Id == params["id"] {
 			UpdateEpisodes(*show)
 			w.Header().Set("Content-Type", "application/json")
-			streamJson, _ := json.Marshal(&jsonObj{ "meta": show })
+			streamJson, _ := json.Marshal(&jsonObj{"meta": show})
 			w.Write(streamJson)
 			return
 		}
