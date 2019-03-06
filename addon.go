@@ -81,8 +81,6 @@ func main() {
 }
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	type jsonObj map[string]interface{}
-
 	jr, _ := json.Marshal(jsonObj{"Path": '/'})
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jr)
